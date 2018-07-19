@@ -13,7 +13,7 @@
 
 @interface GraphicViewController ()
 
-/*
+/* пабликовские property
 @property(strong,nonatomic) NSString* chosedCurrency;
 @property (strong, nonatomic) NSDateComponents *chosedDate;
 */

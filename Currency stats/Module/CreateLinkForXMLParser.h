@@ -8,18 +8,15 @@
 
 #import <Foundation/Foundation.h>
 
-@interface CreateLinkForXMLParser : NSObject <NSXMLParserDelegate>
+@interface CreateLinkForXMLParser : NSObject
 
 @property (nonatomic, strong) NSDateComponents *date;
 @property (nonatomic, strong) NSString *name;
 @property (nonatomic, strong) NSString *parentCode;
 
-@property (nonatomic, strong) NSMutableArray *dataArray;
-
 -(instancetype)initWithName: (NSString *)name
                      date: (NSDateComponents *)date;
 -(NSString *)getLink;
 
-//-(instancetype)initWithArray: (NSMutableArray *)dataArray;
--(void)parserXMLFile;
+
 @end

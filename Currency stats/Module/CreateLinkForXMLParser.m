@@ -10,9 +10,6 @@
 
 @interface CreateLinkForXMLParser()
 
-@property (nonatomic, strong) NSXMLParser *parser;
-@property (nonatomic, strong) NSString *element;
-
 //Currency properties
 @property (nonatomic, strong) NSString *currentName;
 @property (nonatomic, strong) NSString *currentParentCode;
@@ -21,6 +18,7 @@
 
 @implementation CreateLinkForXMLParser
 
+//пабликовские property
 //@property (nonatomic, strong) NSDateComponents *date;
 //@property (nonatomic, strong) NSString *name;
 
@@ -37,14 +35,16 @@
 
 -(NSString *)getLink
 {
-    [self parserXMLFile];
-    
     //Дата на сегодня
     NSDate *today = [NSDate date];
     NSCalendar *gregorian = [[NSCalendar alloc] initWithCalendarIdentifier:NSCalendarIdentifierGregorian];
     NSDateComponents *dateComponents = [gregorian components:(NSCalendarUnitYear  | NSCalendarUnitMonth | NSCalendarUnitDay) fromDate:today];
     
     //тк 06 и 6 для ссылки разные вещи приходится исхитряться
+    //в будущем собираюсь разобраться с NSDate NSDateComponents
+    //и там вроде как можно получить стрингу по типу ddmmyyyy
+    //с кастомным разделителем
+    
     NSString *todayStringMonth;
     NSString *todayStringDay;
     
@@ -95,6 +95,7 @@
     {
         todayStringDay = [[NSString alloc] initWithFormat:@"%ld", todayDay];
     }
+    
     
     //тк их не было в списке кодировок но в daily были пришлось их все тупо перечислить (ID внутри получу позже)
     
@@ -256,48 +257,4 @@
     
     return [NSString stringWithFormat: @"http://www.cbr.ru/scripts/XML_dynamic.asp?date_req1=%@/%@/%ld&date_req2=%@/%@/%ld&VAL_NM_RQ=%@", chosedStringDay, chosedStringMonth, chosedYear, todayStringDay, todayStringMonth, todayYear, self.parentCode];
 }
-
-
--(void)parserXMLFile
-{
-        NSURL *xmlPath = [[NSURL alloc] initWithString: @"http://www.cbr.ru/scripts/XML_val.asp?d=1"];
-        self.parser = [[NSXMLParser alloc] initWithContentsOfURL: xmlPath];
-        self.parser.delegate = self;
-        [self.parser parse];
-}// parserXMLFile
-
-- (void)parser: (NSXMLParser *)parser
-didStartElement: (NSString *)elementName
-  namespaceURI: (NSString *)namespaceURI
- qualifiedName: (NSString *)qName
-    attributes: (NSDictionary<NSString *,NSString *> *)attributeDict
-{
-    self.element = elementName;
-}// parser:didStartElement:namespaceURI:qualifiedName:attributes
-
-- (void)parser: (NSXMLParser *)parser
-foundCharacters: (NSString *)string
-{
-    if ([self.element isEqualToString: @"Name"]){
-        self.currentName = string;
-    }
-    else if ([self.element isEqualToString: @"ParentCode"]){
-        self.currentParentCode = string;
-    }
-}// parser:foundCharacters
-
-- (void)parser: (NSXMLParser *)parser
- didEndElement: (NSString *)elementName
-  namespaceURI: (NSString *)namespaceURI
- qualifiedName: (NSString *)qName
-{
-    if ([elementName isEqualToString: @"Item"]){
-        if ([self.currentName isEqualToString: self.name])
-        {
-            self.parentCode = self.currentParentCode;
-        }
-    };
-    self.element = nil;
-}// parser:didEndElement:namespaceURI:qualifiedName
-
 @end

@@ -16,5 +16,4 @@
 
 @property (strong, nonatomic) UNMutableNotificationContent *localNotification;
 
-
 @end

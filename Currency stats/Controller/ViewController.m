@@ -24,6 +24,8 @@
 @property (strong, nonatomic) IBOutlet UITextField *textMonth;
 @property (strong, nonatomic) IBOutlet UITextField *textYear;
 
+//пабликовский property для pickerView
+//@property (strong, nonatomic) IBOutlet UIPickerView *pickerView;
 @end
 
 @implementation ViewController
@@ -32,7 +34,6 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    
     [self parseForNames];
     
     NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
@@ -46,8 +47,6 @@
     
     NSLog(@"Count of names %lu", self.dataArray.count);
     NSLog(@"Chosed data is %@", self.date);
-    
-    
     
     if (self.choosedName && self.date) //переход на второй view
     {
@@ -67,6 +66,7 @@
 
 - (void) parseForNames
 {
+    //парсим стандартную ссылку что бы получить список названий валют
     self.namesOfCurrency = [[NSMutableArray alloc] init];
     self.dataArray = [[NSMutableArray alloc] init];
     WorkWithXML *listParser = [[WorkWithXML alloc] initWithArray:self.dataArray];
@@ -123,7 +123,7 @@
         [userDefaults synchronize];
     }
     else exit(1);
-}
+}// setDateComponents
 
 - (IBAction)buttonStartWork:(UIButton *)sender
 {
@@ -137,6 +137,7 @@
         NSLog(@"PickerView is rolling");
         exit(2);
     }
+    // переход в GraphicViewController
     [self performSegueWithIdentifier:@"GraphicViewControllerShowSegue" sender:self];
 }// buttonStartWork
 
