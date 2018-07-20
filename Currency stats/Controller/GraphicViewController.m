@@ -10,6 +10,7 @@
 #import "WorkWithXML.h"
 #import "DataOfCurrency.h"
 #import "CreateLinkForXMLParser.h"
+#import "ChangeArrayOfValue.h"
 
 @interface GraphicViewController ()
 
@@ -187,8 +188,6 @@
     WorkWithXML *listParser = [[WorkWithXML alloc] initWithArray:self.dataArray link:[workingLink getLink]];
     [listParser parserXMLFile];
     
-    self.numOfPartitions = [self.dataArray count] - 1 ;
-    
     //получаю значения с выбранной даты до текущей
     self.arrayOfNominals = [[NSMutableArray alloc] init];
     self.arrayOfNumbers = [[NSMutableArray alloc] init];
@@ -200,7 +199,19 @@
         [self.arrayOfNominals addObject:[NSNumber numberWithInteger:data.nominal]];
     }
     
+    
+    //меняем масив чисел и номиналов если много элементов
+    if ([self.arrayOfNumbers count] > 25)
+    {
+        ChangeArrayOfValue *changeValue  = [[ChangeArrayOfValue alloc] initWithMutableArray:self.arrayOfNumbers];
+        ChangeArrayOfValue *changeNominal  = [[ChangeArrayOfValue alloc] initWithMutableArray:self.arrayOfNominals];
+        self.arrayOfNumbers = [changeValue changeLengthsOfArray];
+        self.arrayOfNominals = [changeNominal changeLengthsOfArray];
+    }
+    
     [self checkForChanges];
+    
+    self.numOfPartitions = [self.arrayOfNumbers count] - 1 ;
 }
 
 
@@ -247,12 +258,12 @@
     double stepX = maxX/(double)self.numOfPartitions;
     double forYPoints[[self.arrayOfNumbers count]];
     
-    double maximalY = [[self.arrayOfNumbers objectAtIndex:0] doubleValue];
-    double minimalY = [[self.arrayOfNumbers objectAtIndex:0] doubleValue];
+    double maximalY = [[self.arrayOfNumbers objectAtIndex:0] doubleValue]; // * [[self.arrayOfNominals objectAtIndex:0] doubleValue];
+    double minimalY = [[self.arrayOfNumbers objectAtIndex:0] doubleValue]; // * [[self.arrayOfNominals objectAtIndex:0] doubleValue];
     
     for (int i=0;i<=self.numOfPartitions;i++)
     {
-        forYPoints[i] = [[self.arrayOfNumbers objectAtIndex:i] doubleValue];
+        forYPoints[i] = [[self.arrayOfNumbers objectAtIndex:i] doubleValue]; // * [[self.arrayOfNominals objectAtIndex:i] doubleValue];;
         if (forYPoints[i] < minimalY)
             minimalY = forYPoints[i];
         if (forYPoints[i] > maximalY)

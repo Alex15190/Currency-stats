@@ -146,7 +146,7 @@
 {
     if ((0<[self.textDay.text integerValue])&&([self.textDay.text integerValue]<31))
         if((0<[self.textMonth.text integerValue])&&([self.textMonth.text integerValue]<13))
-            if(2017<[self.textYear.text integerValue])
+            if((1970<[self.textYear.text integerValue])&&([self.textYear.text integerValue]<2019))
                 return YES;
     return NO;
 }// checkDataForValid

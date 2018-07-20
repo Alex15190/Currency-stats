@@ -18,6 +18,7 @@
 		854A77D420F77E8500FE064F /* WorkWithXML.m in Sources */ = {isa = PBXBuildFile; fileRef = 854A77D320F77E8500FE064F /* WorkWithXML.m */; };
 		854A77D720F77EB800FE064F /* DataOfCurrency.m in Sources */ = {isa = PBXBuildFile; fileRef = 854A77D620F77EB800FE064F /* DataOfCurrency.m */; };
 		854A77DA20F783FA00FE064F /* GraphicViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 854A77D920F783FA00FE064F /* GraphicViewController.m */; };
+		856C1B402101C079007A1026 /* ChangeArrayOfValue.m in Sources */ = {isa = PBXBuildFile; fileRef = 856C1B3F2101C079007A1026 /* ChangeArrayOfValue.m */; };
 		85DBB97220FF67A5005338CF /* UserNotifications.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 85DBB97120FF67A5005338CF /* UserNotifications.framework */; };
 /* End PBXBuildFile section */
 
@@ -62,6 +63,8 @@
 		854A77D620F77EB800FE064F /* DataOfCurrency.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DataOfCurrency.m; sourceTree = "<group>"; };
 		854A77D820F783FA00FE064F /* GraphicViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GraphicViewController.h; sourceTree = "<group>"; };
 		854A77D920F783FA00FE064F /* GraphicViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = GraphicViewController.m; sourceTree = "<group>"; };
+		856C1B3E2101C079007A1026 /* ChangeArrayOfValue.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ChangeArrayOfValue.h; sourceTree = "<group>"; };
+		856C1B3F2101C079007A1026 /* ChangeArrayOfValue.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ChangeArrayOfValue.m; sourceTree = "<group>"; };
 		85DBB97120FF67A5005338CF /* UserNotifications.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UserNotifications.framework; path = System/Library/Frameworks/UserNotifications.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
@@ -173,6 +176,8 @@
 				854A77D620F77EB800FE064F /* DataOfCurrency.m */,
 				8518DE3D20FC9B4600CDCE7A /* CreateLinkForXMLParser.h */,
 				8518DE3E20FC9B4600CDCE7A /* CreateLinkForXMLParser.m */,
+				856C1B3E2101C079007A1026 /* ChangeArrayOfValue.h */,
+				856C1B3F2101C079007A1026 /* ChangeArrayOfValue.m */,
 			);
 			path = Module;
 			sourceTree = "<group>";
@@ -325,6 +330,7 @@
 				854A77AD20F7781B00FE064F /* main.m in Sources */,
 				854A779F20F7781400FE064F /* AppDelegate.m in Sources */,
 				8518DE3F20FC9B4600CDCE7A /* CreateLinkForXMLParser.m in Sources */,
+				856C1B402101C079007A1026 /* ChangeArrayOfValue.m in Sources */,
 				854A77DA20F783FA00FE064F /* GraphicViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
