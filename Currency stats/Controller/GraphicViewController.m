@@ -62,7 +62,7 @@
         self.chosedDate = [userDefaults objectForKey:@"Date"];
     }
     
-
+#warning нужно это переделать
     //если начал бекграунд таск то должен и закончить. (научиться это делать)
     [[UIApplication sharedApplication] beginBackgroundTaskWithExpirationHandler:nil];
     self.timer = [NSTimer timerWithTimeInterval:1*60*60 target:self selector:@selector(customSelectorForTimer) userInfo:nil repeats:YES];
@@ -178,6 +178,8 @@
 
 - (void) createAndParseLinkAndGetData
 {
+    #warning Нужно сделать это в другом потоке
+    
     
     self.dataArray = [[NSMutableArray alloc] init];
     NSDateComponents *date = [[NSDateComponents alloc] init];

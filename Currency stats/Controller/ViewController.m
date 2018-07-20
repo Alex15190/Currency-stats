@@ -66,6 +66,7 @@
 
 - (void) parseForNames
 {
+#warning Нужно сделать это в другом потоке
     //парсим стандартную ссылку что бы получить список названий валют
     self.namesOfCurrency = [[NSMutableArray alloc] init];
     self.dataArray = [[NSMutableArray alloc] init];
@@ -144,6 +145,7 @@
 
 - (BOOL)checkDataForValid
 {
+    #warning Сделать более жесткую проверку даты тк эту при желании можно обойти и крашнуть приложение
     if ((0<[self.textDay.text integerValue])&&([self.textDay.text integerValue]<31))
         if((0<[self.textMonth.text integerValue])&&([self.textMonth.text integerValue]<13))
             if((1970<[self.textYear.text integerValue])&&([self.textYear.text integerValue]<2019))
