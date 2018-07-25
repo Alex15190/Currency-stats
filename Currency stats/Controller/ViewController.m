@@ -16,7 +16,7 @@
 
 @property (strong, nonatomic) NSMutableArray *dataArray;
 
-@property (strong, nonatomic) NSMutableArray *namesOfCurrency;
+@property (strong, atomic) NSMutableArray *namesOfCurrency;
 @property (strong, nonatomic) NSString *choosedName;
 @property (strong, nonatomic) NSArray *date;
 
@@ -34,6 +34,10 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    
+    self.pickerView.dataSource = self;
+    self.pickerView.delegate = self;
+    
     [self parseForNames];
     
     NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
@@ -66,21 +70,24 @@
 
 - (void) parseForNames
 {
-#warning Нужно сделать это в другом потоке
-    //парсим стандартную ссылку что бы получить список названий валют
-    self.namesOfCurrency = [[NSMutableArray alloc] init];
-    self.dataArray = [[NSMutableArray alloc] init];
-    WorkWithXML *listParser = [[WorkWithXML alloc] initWithArray:self.dataArray];
-    [listParser parserXMLFile];
+    dispatch_queue_t namesQ = dispatch_queue_create("names queue", NULL);
+    dispatch_async(namesQ, ^{
+        //парсим стандартную ссылку что бы получить список названий валют
+        self.namesOfCurrency = [[NSMutableArray alloc] init];
+        self.dataArray = [[NSMutableArray alloc] init];
+        WorkWithXML *listParser = [[WorkWithXML alloc] initWithArray:self.dataArray];
+        [listParser parserXMLFile];
+        
+        for (int i = 0; i < self.dataArray.count; i++)
+        {
+            DataOfCurrency *data = [self.dataArray objectAtIndex:i];
+            [self.namesOfCurrency addObject:data.name];
+        }
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self.pickerView reloadAllComponents];
+        });
     
-    for (int i = 0; i < self.dataArray.count; i++)
-    {
-        DataOfCurrency *data = [self.dataArray objectAtIndex:i];
-        [self.namesOfCurrency addObject:data.name];
-    }
-    
-    self.pickerView.dataSource = self;
-    self.pickerView.delegate = self;
+    });
 
 }// parseForNames
 

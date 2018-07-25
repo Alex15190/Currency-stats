@@ -71,6 +71,14 @@
     
 }// viewDidLoad
 
+
+- (void) doWorkWithTimer
+{
+    self.timer = [NSTimer timerWithTimeInterval:1*60*60 target:self selector:@selector(customSelectorForTimer) userInfo:nil repeats:YES];
+    [[NSRunLoop mainRunLoop] addTimer:self.timer forMode:NSDefaultRunLoopMode];
+}
+
+
 - (void)viewWillDisappear:(BOOL)animated
 {
     [super viewWillDisappear:animated];
@@ -178,9 +186,6 @@
 
 - (void) createAndParseLinkAndGetData
 {
-    #warning Нужно сделать это в другом потоке
-    
-    
     self.dataArray = [[NSMutableArray alloc] init];
     NSDateComponents *date = [[NSDateComponents alloc] init];
     date = [self dateComponentsByChosedDate];
