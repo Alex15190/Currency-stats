@@ -17,8 +17,8 @@
 @property (strong, nonatomic) NSMutableArray *dataArray;
 
 @property (strong, atomic) NSMutableArray *namesOfCurrency;
-@property (strong, nonatomic) NSString *choosedName;
-@property (strong, nonatomic) NSArray *date;
+@property (strong, atomic) NSString *choosedName;
+@property (strong, atomic) NSArray *date;
 
 @property (strong, nonatomic) IBOutlet UITextField *textDay;
 @property (strong, nonatomic) IBOutlet UITextField *textMonth;

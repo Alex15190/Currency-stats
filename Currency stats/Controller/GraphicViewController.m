@@ -83,6 +83,7 @@
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
+    [self createAndParseLinkAndGetData];
     [self drawData];
 }// viewWillAppear
 
@@ -198,7 +199,6 @@
         [self.arrayOfNominals addObject:[NSNumber numberWithInteger:data.nominal]];
     }
     
-    
     //меняем масив чисел и номиналов если много элементов
     if ([self.arrayOfNumbers count] > 25)
     {
@@ -209,7 +209,6 @@
     }
     
     [self checkForChanges];
-    
     self.numOfPartitions = [self.arrayOfNumbers count] - 1 ;
 }
 

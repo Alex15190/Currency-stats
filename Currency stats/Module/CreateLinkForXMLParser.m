@@ -38,63 +38,15 @@
     //Дата на сегодня
     NSDate *today = [NSDate date];
     NSCalendar *gregorian = [[NSCalendar alloc] initWithCalendarIdentifier:NSCalendarIdentifierGregorian];
-    NSDateComponents *dateComponents = [gregorian components:(NSCalendarUnitYear  | NSCalendarUnitMonth | NSCalendarUnitDay) fromDate:today];
     
-    //тк 06 и 6 для ссылки разные вещи приходится исхитряться
-    //в будущем собираюсь разобраться с NSDate NSDateComponents
-    //и там вроде как можно получить стрингу по типу ddmmyyyy
-    //с кастомным разделителем
+    NSDate *chosedDate = [gregorian dateFromComponents:self.date];
     
-    NSString *todayStringMonth;
-    NSString *todayStringDay;
+    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+    [dateFormatter setDateFormat:@"dd/MM/yyyy"];
     
-    NSString *chosedStringMonth;
-    NSString *chosedStringDay;
+    NSString *firstDate = [dateFormatter stringFromDate:chosedDate];
+    NSString *secondDate = [dateFormatter stringFromDate:today];
     
-    NSInteger chosedYear = [self.date year];
-    NSInteger chosedMonth = [self.date month];
-    if(chosedMonth < 10)
-    {
-        chosedStringMonth = [[NSString alloc] initWithFormat:@"0%ld", chosedMonth];
-    }
-    else
-    {
-        chosedStringMonth = [[NSString alloc] initWithFormat:@"%ld", chosedMonth];
-    }
-    NSInteger chosedDay = [self.date day];
-    if(chosedDay < 10)
-    {
-        chosedStringDay = [[NSString alloc] initWithFormat:@"0%ld", chosedDay];
-    }
-    else
-    {
-        chosedStringDay = [[NSString alloc] initWithFormat:@"%ld", chosedDay];
-    }
-    
-    
-    
-    NSInteger todayYear = [dateComponents year];
-    NSInteger todayMonth = [dateComponents month];
-    
-    
-    
-    if (todayMonth < 10)
-    {
-        todayStringMonth = [[NSString alloc] initWithFormat:@"0%ld", todayMonth];
-    }
-    else
-    {
-        todayStringMonth = [[NSString alloc] initWithFormat:@"%ld", todayMonth];
-    }
-    NSInteger todayDay = [dateComponents day];
-    if (todayDay < 10)
-    {
-        todayStringDay = [[NSString alloc] initWithFormat:@"0%ld", todayDay];
-    }
-    else
-    {
-        todayStringDay = [[NSString alloc] initWithFormat:@"%ld", todayDay];
-    }
     
     
     //тк их не было в списке кодировок но в daily были пришлось их все тупо перечислить (ID внутри получу позже)
@@ -250,11 +202,11 @@
     
     
     
-    NSLog(@"http://www.cbr.ru/scripts/XML_dynamic.asp?date_req1=%@/%@/%ld&date_req2=%@/%@/%ld&VAL_NM_RQ=%@", chosedStringDay, chosedStringMonth, chosedYear, todayStringDay, todayStringMonth, todayYear, self.parentCode);
+    NSLog(@"http://www.cbr.ru/scripts/XML_dynamic.asp?date_req1=%@&date_req2=%@&VAL_NM_RQ=%@",firstDate ,secondDate ,self.parentCode);
     
     //http://www.cbr.ru/scripts/XML_dynamic.asp?date_req1=02/03/2001&date_req2=14/03/2001&VAL_NM_RQ=R01235
     
     
-    return [NSString stringWithFormat: @"http://www.cbr.ru/scripts/XML_dynamic.asp?date_req1=%@/%@/%ld&date_req2=%@/%@/%ld&VAL_NM_RQ=%@", chosedStringDay, chosedStringMonth, chosedYear, todayStringDay, todayStringMonth, todayYear, self.parentCode];
+    return [NSString stringWithFormat: @"http://www.cbr.ru/scripts/XML_dynamic.asp?date_req1=%@&date_req2=%@&VAL_NM_RQ=%@",firstDate ,secondDate ,self.parentCode];
 }
 @end
