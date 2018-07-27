@@ -12,7 +12,7 @@
 #import "WorkWithXML.h"
 #import "DataOfCurrency.h"
 
-@interface ViewController ()
+@interface ViewController () <UITextViewDelegate>
 
 @property (strong, nonatomic) NSMutableArray *dataArray;
 
@@ -60,7 +60,7 @@
     
 }// viewDidLoad
 
-- (void) setLableBySavedDate
+- (void)setLableBySavedDate
 {
     NSLog(@"%@",[self.date objectAtIndex:0]);
     self.textDay.text = [NSString stringWithFormat:@"%@",[self.date objectAtIndex:0]];
@@ -68,7 +68,13 @@
     self.textYear.text = [NSString stringWithFormat:@"%@",[self.date objectAtIndex:2]];
 }
 
-- (void) parseForNames
+- (BOOL)textFieldShouldReturn:(UITextField *)textField
+{
+    [textField resignFirstResponder];
+    return YES;
+}
+
+- (void)parseForNames
 {
     dispatch_queue_t namesQ = dispatch_queue_create("names queue", NULL);
     dispatch_async(namesQ, ^{
@@ -130,7 +136,6 @@
         [userDefaults setObject:self.date forKey:@"Date"];
         [userDefaults synchronize];
     }
-    else exit(1);
 }// setDateComponents
 
 - (IBAction)buttonStartWork:(UIButton *)sender
@@ -138,12 +143,6 @@
     if (![self anySubViewScrolling: self.view]) // если не крутится picker view то
     {
         [self setDateComponents];
-        
-    }
-    else
-    {
-        NSLog(@"PickerView is rolling");
-        exit(2);
     }
     // переход в GraphicViewController
     [self performSegueWithIdentifier:@"GraphicViewControllerShowSegue" sender:self];
@@ -208,7 +207,47 @@
     }
 }// prepareForSegue
 
+- (BOOL)shouldPerformSegueWithIdentifier:(NSString *)identifier sender:(id)sender
+{
+    if ([identifier isEqualToString:@"GraphicViewControllerShowSegue"])
+    {
+        if (![self checkDataForValid])
+        {
+            [self alert:@"Некорректная дата"];
+            return NO;
+        }
+        else if ([self anySubViewScrolling: self.view])
+        {
+            [self alert:@"PickerView крутится"];
+            return NO;
+        }
+        else {
+            return YES;
+        }
+    }
+    else
+    {
+        return [super shouldPerformSegueWithIdentifier:identifier sender:sender];
+    }
+}
 
+- (void)performSegueWithIdentifier:(NSString *)identifier sender:(id)sender
+{
+    if ([self shouldPerformSegueWithIdentifier:identifier sender:sender]) {
+        [super performSegueWithIdentifier:identifier sender:sender];
+    }
+}
+
+
+
+- (void)alert: (NSString *)msg
+{
+    UIAlertController* alert = [UIAlertController alertControllerWithTitle:@"Выбор даты" message:msg preferredStyle:UIAlertControllerStyleAlert];
+    UIAlertAction* defaultAction = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {}];
+    
+    [alert addAction:defaultAction];
+    [self presentViewController:alert animated:YES completion:nil];
+}
 
 
 
