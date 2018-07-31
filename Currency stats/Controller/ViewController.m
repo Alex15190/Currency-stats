@@ -30,13 +30,17 @@
 
 @implementation ViewController
 
-
+#pragma mark viewWill/viewDid
 - (void)viewDidLoad
 {
     [super viewDidLoad];
     
     self.pickerView.dataSource = self;
     self.pickerView.delegate = self;
+    
+    [self.textDay setKeyboardType:UIKeyboardTypeNumberPad];
+    [self.textMonth setKeyboardType:UIKeyboardTypeNumberPad];
+    [self.textYear setKeyboardType:UIKeyboardTypeNumberPad];
     
     [self parseForNames];
     
@@ -60,6 +64,22 @@
     
 }// viewDidLoad
 
+- (void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillShow:) name:UIKeyboardWillShowNotification object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillHide:) name:UIKeyboardWillHideNotification object:nil];
+}
+
+- (void)viewWillDisappear:(BOOL)animated
+{
+    [super viewWillDisappear:animated];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardWillShowNotification object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardWillHideNotification object:nil];
+}
+
+#pragma mark Work with text and lable
+
 - (void)setLableBySavedDate
 {
     NSLog(@"%@",[self.date objectAtIndex:0]);
@@ -68,11 +88,6 @@
     self.textYear.text = [NSString stringWithFormat:@"%@",[self.date objectAtIndex:2]];
 }
 
-- (BOOL)textFieldShouldReturn:(UITextField *)textField
-{
-    [textField resignFirstResponder];
-    return YES;
-}
 
 - (void)parseForNames
 {
@@ -97,29 +112,6 @@
 
 }// parseForNames
 
-//проверка крутится ли pickerView
-
--(BOOL)anySubViewScrolling:(UIView*)view
-{
-    if([ view isKindOfClass:[ UIScrollView class ] ])
-    {
-        UIScrollView* scroll_view = (UIScrollView*) view;
-        if(scroll_view.dragging || scroll_view.decelerating)
-        {
-            return true;
-        }
-    }
-    
-    for(UIView *sub_view in [ view subviews ])
-    {
-        if([ self anySubViewScrolling:sub_view ])
-        {
-            return true;
-        }
-    }
-    
-    return false;
-}// anySubViewScrolling
 
 -(void)setDateComponents
 {
@@ -138,33 +130,12 @@
     }
 }// setDateComponents
 
-- (IBAction)buttonStartWork:(UIButton *)sender
-{
-    if (![self anySubViewScrolling: self.view]) // если не крутится picker view то
-    {
-        [self setDateComponents];
-    }
-    // переход в GraphicViewController
-    [self performSegueWithIdentifier:@"GraphicViewControllerShowSegue" sender:self];
-}// buttonStartWork
-
-
-- (BOOL)checkDataForValid
-{
-    #warning Сделать более жесткую проверку даты тк эту при желании можно обойти и крашнуть приложение
-    if ((0<[self.textDay.text integerValue])&&([self.textDay.text integerValue]<31))
-        if((0<[self.textMonth.text integerValue])&&([self.textMonth.text integerValue]<13))
-            if((1970<[self.textYear.text integerValue])&&([self.textYear.text integerValue]<2019))
-                return YES;
-    return NO;
-}// checkDataForValid
+#pragma mark PickerView
 
 - (NSInteger)numberOfComponentsInPickerView:(UIPickerView *)pickerView
 {
     return 1;
 }// numberOfComponentsInPickerView
-
-
 
 
 - (NSInteger)pickerView:(UIPickerView *)pickerView numberOfRowsInComponent:(NSInteger)component
@@ -173,14 +144,10 @@
 }// numberOfRowsInComponent
 
 
-
-
 - (NSString *)pickerView:(UIPickerView *)pickerView titleForRow:(NSInteger)row forComponent:(NSInteger)component
 {
     return self.namesOfCurrency[row];
 }// titleForRow
-
-
 
 
 - (void)pickerView:(UIPickerView *)pickerView didSelectRow:(NSInteger)row inComponent:(NSInteger)component
@@ -192,7 +159,7 @@
     [userDefaults synchronize];
 }// didSelectRow
 
-
+#pragma mark Segue
 
 - (void) prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
 {
@@ -206,6 +173,7 @@
         }
     }
 }// prepareForSegue
+
 
 - (BOOL)shouldPerformSegueWithIdentifier:(NSString *)identifier sender:(id)sender
 {
@@ -238,6 +206,58 @@
     }
 }
 
+#pragma mark Check some things and alert
+
+//проверка крутится ли pickerView
+-(BOOL)anySubViewScrolling:(UIView*)view
+{
+    if([ view isKindOfClass:[ UIScrollView class ] ])
+    {
+        UIScrollView* scroll_view = (UIScrollView*) view;
+        if(scroll_view.dragging || scroll_view.decelerating)
+        {
+            return true;
+        }
+    }
+    
+    for(UIView *sub_view in [ view subviews ])
+    {
+        if([ self anySubViewScrolling:sub_view ])
+        {
+            return true;
+        }
+    }
+    
+    return false;
+}// anySubViewScrolling
+
+
+- (IBAction)buttonStartWork:(UIButton *)sender
+{
+    if (![self anySubViewScrolling: self.view]) // если не крутится picker view то
+    {
+        [self setDateComponents];
+    }
+    
+    // убираем клавиатуру
+    [self.textDay resignFirstResponder];
+    [self.textMonth resignFirstResponder];
+    [self.textYear resignFirstResponder];
+    
+    // переход в GraphicViewController
+    [self performSegueWithIdentifier:@"GraphicViewControllerShowSegue" sender:self];
+}// buttonStartWork
+
+
+- (BOOL)checkDataForValid
+{
+#warning Сделать более жесткую проверку даты тк эту при желании можно обойти и крашнуть приложение
+    if ((0<[self.textDay.text integerValue])&&([self.textDay.text integerValue]<31))
+        if((0<[self.textMonth.text integerValue])&&([self.textMonth.text integerValue]<13))
+            if((1970<[self.textYear.text integerValue])&&([self.textYear.text integerValue]<2019))
+                return YES;
+    return NO;
+}// checkDataForValid
 
 
 - (void)alert: (NSString *)msg
@@ -249,7 +269,45 @@
     [self presentViewController:alert animated:YES completion:nil];
 }
 
+#pragma mark Keyboard stuff
 
 
+//на случай, если я буду делать кастомную клавиатуру с кнопкой return
+/*
+- (BOOL)textFieldShouldReturn:(UITextField *)textField
+{
+    [textField resignFirstResponder];
+    return YES;
+}
+*/
+
+
+-(void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event
+{
+    [self.textDay resignFirstResponder];
+    [self.textMonth resignFirstResponder];
+    [self.textYear resignFirstResponder];
+}
+
+
+- (void)keyboardWillShow:(NSNotification *)notification
+{
+    CGSize keyboardSize = [[[notification userInfo] objectForKey:UIKeyboardFrameBeginUserInfoKey] CGRectValue].size;
+    [UIView animateWithDuration:0.3 animations:^{
+        CGRect f = self.view.frame;
+        f.origin.y = -keyboardSize.height;
+        self.view.frame = f;
+    }];
+}
+
+
+-(void)keyboardWillHide:(NSNotification *)notification
+{
+    [UIView animateWithDuration:0.3 animations:^{
+        CGRect f = self.view.frame;
+        f.origin.y = 0.0f;
+        self.view.frame = f;
+    }];
+}
 
 @end
