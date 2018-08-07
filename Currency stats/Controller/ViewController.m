@@ -37,11 +37,6 @@
     
     self.pickerView.dataSource = self;
     self.pickerView.delegate = self;
-    
-    [self.textDay setKeyboardType:UIKeyboardTypeNumberPad];
-    [self.textMonth setKeyboardType:UIKeyboardTypeNumberPad];
-    [self.textYear setKeyboardType:UIKeyboardTypeNumberPad];
-    
     [self parseForNames];
     
     NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
@@ -298,6 +293,7 @@
         f.origin.y = -keyboardSize.height;
         self.view.frame = f;
     }];
+    
 }
 
 
