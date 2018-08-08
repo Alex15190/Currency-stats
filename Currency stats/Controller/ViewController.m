@@ -39,6 +39,10 @@
     self.pickerView.delegate = self;
     [self parseForNames];
     
+    [self.textDay setKeyboardType:UIKeyboardTypeNumberPad];
+    [self.textMonth setKeyboardType:UIKeyboardTypeNumberPad];
+    [self.textYear setKeyboardType:UIKeyboardTypeNumberPad];
+    
     NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
     self.choosedName = [userDefaults objectForKey:@"Currency name"];
     self.date = [userDefaults objectForKey:@"Date"];
@@ -48,6 +52,7 @@
         [self setDateComponents];
     }        
     
+    NSLog(@"Chosed name is %@",self.choosedName);
     NSLog(@"Count of names %lu", self.dataArray.count);
     NSLog(@"Chosed data is %@", self.date);
     
@@ -86,7 +91,7 @@
 
 - (void)parseForNames
 {
-    dispatch_queue_t namesQ = dispatch_queue_create("names queue", NULL);
+    dispatch_queue_t namesQ = dispatch_queue_create("com.CurrencyStats.namesQ", NULL);
     dispatch_async(namesQ, ^{
         //парсим стандартную ссылку что бы получить список названий валют
         self.namesOfCurrency = [[NSMutableArray alloc] init];
@@ -293,7 +298,6 @@
         f.origin.y = -keyboardSize.height;
         self.view.frame = f;
     }];
-    
 }
 
 

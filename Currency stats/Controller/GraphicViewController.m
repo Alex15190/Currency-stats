@@ -36,7 +36,7 @@
 @property (strong, nonatomic) IBOutlet UILabel *minY;
 @property (strong, nonatomic) IBOutlet UILabel *lableForDate;
 
-
+@property (strong, nonatomic) dispatch_queue_t currencyQ;
 
 @end
 
@@ -55,6 +55,8 @@
     
     NSLog(@"viewDidLoad");
     
+    self.currencyQ = dispatch_queue_create("com.CurrencyStats", NULL);
+    
     if (!self.chosedCurrency && !self.chosedDate)
     {
         NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
@@ -62,10 +64,12 @@
         self.chosedDate = [userDefaults objectForKey:@"Date"];
     }
     
-#warning нужно это переделать
-    //если начал бекграунд таск то должен и закончить. (научиться это делать)
+#warning все еще это использование таймера мне не нравится за счет beginBackgroundTask
+    
+    __typeof(self) __weak weakSelf = self; //против цикла удержания в таймере
+    
     [[UIApplication sharedApplication] beginBackgroundTaskWithExpirationHandler:nil];
-    self.timer = [NSTimer timerWithTimeInterval:1*60*60 target:self selector:@selector(customSelectorForTimer) userInfo:nil repeats:YES];
+    self.timer = [NSTimer timerWithTimeInterval:1*60*60 target:weakSelf selector:@selector(customSelectorForTimer) userInfo:nil repeats:YES];
     [[NSRunLoop mainRunLoop] addTimer:self.timer forMode:NSDefaultRunLoopMode];
     //[[UIApplication sharedApplication] endBackgroundTask: task];
     
@@ -79,20 +83,18 @@
     [self.timer invalidate];
 }// viewWillDisappear
 
-
-- (void)viewWillAppear:(BOOL)animated
-{
-    [super viewWillAppear:animated];
-    [self createAndParseLinkAndGetData];
-    [self drawData];
-}// viewWillAppear
-
 - (void)viewDidLayoutSubviews
 {
     [super viewDidLayoutSubviews];
-    [self createAndParseLinkAndGetData];
-    [self drawData];
-}// viewWillAppear
+    
+    NSLog(@"viewDidLayoutSubviews");
+    dispatch_async(self.currencyQ, ^{
+        [self createAndParseLinkAndGetData];
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self drawData];
+        });
+    });
+}// viewDidLayoutSubviews
 
 #pragma mark Custom selector
 
@@ -109,12 +111,17 @@
 
 - (void) checkForChanges
 {
+    
+    NSLog(@"checkForChanges");
+    
     //для проверки нотификатора
     //self.lastValue = 1;
     
     if((self.lastValue != [[self.arrayOfNumbers lastObject] doubleValue]) && (self.lastValue != 0))
     {
-        [self notificationForUser];
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self notificationForUser];
+        });
     }
 }
 
@@ -144,6 +151,9 @@
 
 -(void) drawData
 {
+    
+    NSLog(@"drawData");
+    
     self.lastValue = [[self.arrayOfNumbers lastObject] doubleValue];
     
     //Собираю дату из масива которыый я засейвил ранее
@@ -179,6 +189,7 @@
 
 - (void) createAndParseLinkAndGetData
 {
+    NSLog(@"createAndParseLinkAndGetData");
     self.dataArray = [[NSMutableArray alloc] init];
     NSDateComponents *date = [[NSDateComponents alloc] init];
     date = [self dateComponentsByChosedDate];
@@ -216,6 +227,8 @@
 
 -(void) drawingFuncForBackGround
 {
+    
+    NSLog(@"drawingFuncForBackGround");
 
     NSInteger startX = self.viewForGraphic.bounds.origin.x;
     NSInteger startY = self.viewForGraphic.bounds.origin.y;
@@ -249,6 +262,9 @@
 
 -(void) drawingFuncOfNumbers
 {
+    
+    NSLog(@"drawingFuncOfNubers");
+    
     double startX = self.viewForGraphic.bounds.origin.x;
     double startY = self.viewForGraphic.bounds.origin.y;
     double maxX = self.viewForGraphic.bounds.size.height;
@@ -310,8 +326,14 @@
 
 - (IBAction)refreshData:(UIButton *)sender
 {
-    [self createAndParseLinkAndGetData];
-    [self drawData];
+    NSLog(@"refreshData");
+    dispatch_queue_t currencyQ= dispatch_queue_create("com.CurrencyStats", NULL);
+    dispatch_async(currencyQ, ^{
+        [self createAndParseLinkAndGetData];
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self drawData];
+        });
+    });
 }
 
 @end
